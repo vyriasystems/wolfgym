@@ -23,6 +23,17 @@ export const schedules: ScheduleBlock[] = [
     ],
   },
   {
+    modality: "Funcional Kids",
+    tag: "3x semana",
+    rows: [
+      {
+        label: "Turma",
+        days: "Segunda, quarta e sexta",
+        time: "3x na semana",
+      },
+    ],
+  },
+  {
     modality: "Boxe",
     tag: "3x semana",
     rows: [

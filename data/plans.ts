@@ -1,6 +1,7 @@
 export type ClassModalityId =
   | "musculacao"
   | "funcional"
+  | "funcional-kids"
   | "boxe"
   | "muay-thai-kids"
   | "muay-thai-adulto";
@@ -24,6 +25,7 @@ export interface Modality {
   name: string;
   hook: string;
   short: string;
+  image: string;
 }
 
 export const modalities: Modality[] = [
@@ -32,37 +34,50 @@ export const modalities: Modality[] = [
     name: "Musculação",
     short: "Sala de peso",
     hook: "Peso, disciplina e o básico que não é básico.",
+    image: "/modalidades/musculacao.png",
   },
   {
     id: "funcional",
-    name: "Funcional",
+    name: "Funcional Adulto",
     short: "Adulto",
     hook: "Condicionamento de verdade, sem enrolação.",
+    image: "/modalidades/funcional.png",
+  },
+  {
+    id: "funcional-kids",
+    name: "Funcional Kids",
+    short: "Kids",
+    hook: "Energia, coordenação e disciplina — no ritmo da criançada.",
+    image: "/modalidades/funcional-kids.png",
   },
   {
     id: "boxe",
     name: "Boxe",
     short: "Luta",
     hook: "Disciplina, força e foco pra vencer na vida.",
+    image: "/modalidades/boxe.png",
   },
   {
     id: "muay-thai-kids",
     name: "Muay Thai Kids",
     short: "Kids",
     hook: "Respeito, foco e energia — desde cedo na alcateia.",
+    image: "/modalidades/muay-thai-kids.png",
   },
   {
     id: "muay-thai-adulto",
     name: "Muay Thai Adulto",
     short: "Adulto",
     hook: "A arte das oito armas. Corpo e cabeça no mesmo round.",
+    image: "/modalidades/muay-thai-adulto.png",
   },
 ];
 
 export const planModalities: { id: ModalityId; name: string; note?: string }[] =
   [
     { id: "musculacao", name: "Musculação" },
-    { id: "funcional", name: "Funcional" },
+    { id: "funcional", name: "Funcional Adulto" },
+    { id: "funcional-kids", name: "Funcional Kids" },
     { id: "boxe", name: "Boxe" },
     { id: "muay-thai-kids", name: "Muay Thai Kids" },
     { id: "muay-thai-adulto", name: "Muay Thai Adulto" },
@@ -192,6 +207,16 @@ export const plansByModality: Record<ModalityId, PlanOption[]> = {
         "Manhã 06h, 07h, 08h",
         "Noite 17h, 18h, 19h",
       ],
+    },
+  ],
+  "funcional-kids": [
+    {
+      id: "func-kids-3x",
+      label: "3x semana",
+      price: 160,
+      kind: "monthly",
+      period: "/mês",
+      details: ["Segunda, quarta e sexta"],
     },
   ],
   boxe: [
