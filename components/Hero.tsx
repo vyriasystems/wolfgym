@@ -5,6 +5,19 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { whatsappUrl } from "@/lib/site";
 
+function prepareInlineVideo(video: HTMLVideoElement) {
+  video.muted = true;
+  video.defaultMuted = true;
+  video.volume = 0;
+  video.playsInline = true;
+  video.autoplay = true;
+  video.loop = true;
+  video.setAttribute("muted", "");
+  video.setAttribute("autoplay", "");
+  video.setAttribute("playsinline", "true");
+  video.setAttribute("webkit-playsinline", "true");
+}
+
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -14,62 +27,92 @@ export default function Hero() {
   useEffect(() => {
     const video = videoRef.current;
     let cancelled = false;
+    let resumeTimer = 0;
+
+    const tryPlay = () => {
+      if (cancelled || !video || document.hidden) return;
+      prepareInlineVideo(video);
+      const play = video.play();
+      if (play) play.catch(() => undefined);
+    };
+
+    const restartLoop = () => {
+      if (cancelled || !video) return;
+      video.currentTime = 0;
+      tryPlay();
+    };
+
+    const onPause = () => {
+      if (cancelled || document.hidden) return;
+      window.clearTimeout(resumeTimer);
+      resumeTimer = window.setTimeout(tryPlay, 80);
+    };
 
     if (video) {
-      video.defaultPlaybackRate = 1;
-      video.playbackRate = 1;
-      const tryPlay = () => {
-        if (cancelled) return;
-        video.play().catch(() => undefined);
-      };
+      prepareInlineVideo(video);
+      video.src = "/hero-ios.mp4?v=4";
+      video.load();
       tryPlay();
+      video.addEventListener("loadeddata", tryPlay);
       video.addEventListener("canplay", tryPlay);
-      video.addEventListener("stalled", tryPlay);
-      video.addEventListener("suspend", tryPlay);
+      video.addEventListener("ended", restartLoop);
+      video.addEventListener("pause", onPause);
     }
+
+    document.addEventListener("visibilitychange", tryPlay);
+    window.addEventListener("pageshow", tryPlay);
+    window.addEventListener("touchstart", tryPlay, { passive: true });
+    window.addEventListener("click", tryPlay);
 
     gsap.registerPlugin(ScrollTrigger);
     const section = sectionRef.current;
-    if (!section) {
-      return () => {
-        cancelled = true;
-      };
+
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let ctx: gsap.Context | undefined;
+    if (section && !reduceMotion) {
+      ctx = gsap.context(() => {
+        gsap.to(overlayRef.current, {
+          opacity: 0.72,
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+          },
+        });
+
+        gsap.to(contentRef.current, {
+          y: -48,
+          opacity: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: "75% top",
+            scrub: true,
+          },
+        });
+      }, sectionRef);
     }
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return () => {
-        cancelled = true;
-      };
-    }
-
-    const ctx = gsap.context(() => {
-      gsap.to(overlayRef.current, {
-        opacity: 0.72,
-        ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
-
-      gsap.to(contentRef.current, {
-        y: -48,
-        opacity: 0,
-        ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          start: "top top",
-          end: "75% top",
-          scrub: true,
-        },
-      });
-    }, sectionRef);
 
     return () => {
       cancelled = true;
-      ctx.revert();
+      window.clearTimeout(resumeTimer);
+      ctx?.revert();
+      if (video) {
+        video.removeEventListener("loadeddata", tryPlay);
+        video.removeEventListener("canplay", tryPlay);
+        video.removeEventListener("ended", restartLoop);
+        video.removeEventListener("pause", onPause);
+      }
+      document.removeEventListener("visibilitychange", tryPlay);
+      window.removeEventListener("pageshow", tryPlay);
+      window.removeEventListener("touchstart", tryPlay);
+      window.removeEventListener("click", tryPlay);
     };
   }, []);
 
@@ -82,7 +125,7 @@ export default function Hero() {
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <video
           ref={videoRef}
-          className="absolute inset-0 h-full w-full object-cover [transform:translateZ(0)] [backface-visibility:hidden]"
+          className="absolute inset-0 h-full w-full object-cover contrast-[1.1] saturate-[1.12] brightness-[1.06]"
           autoPlay
           muted
           loop
@@ -93,11 +136,11 @@ export default function Hero() {
           disableRemotePlayback
           aria-hidden="true"
         >
-          <source src="/hero.mp4?v=2" type="video/mp4" />
+          <source src="/hero-ios.mp4?v=4" type="video/mp4" />
         </video>
       </div>
 
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-wolf-black/50 via-wolf-black/25 to-wolf-black/70" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-wolf-black/22 via-wolf-black/8 to-wolf-black/42" />
       <div
         ref={overlayRef}
         className="pointer-events-none absolute inset-0 bg-wolf-black opacity-0"
