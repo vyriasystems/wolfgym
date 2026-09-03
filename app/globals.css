@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0a0a0a;
+  --foreground: #f5f5f5;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-body), Inter, sans-serif;
+}
+
+::selection {
+  background: #f2a63d;
+  color: #0a0a0a;
+}
+
+section[id] {
+  scroll-margin-top: 5.5rem;
+}
+
+@layer components {
+  .eyebrow {
+    @apply font-oswald text-[11px] sm:text-xs uppercase tracking-[0.42em] text-wolf-gold;
+  }
+
+  .display-title {
+    @apply font-display uppercase leading-[0.9] tracking-pack text-wolf-white;
+  }
+
+  .btn-gold {
+    @apply inline-flex items-center justify-center bg-wolf-gold px-7 py-3.5 font-display text-lg uppercase tracking-wide text-wolf-black transition-colors hover:bg-wolf-gold-dark;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center border border-wolf-silver/35 px-7 py-3.5 font-display text-lg uppercase tracking-wide text-wolf-white transition-colors hover:border-wolf-gold hover:text-wolf-gold;
+  }
+
+  .gold-rule {
+    @apply h-px w-12 bg-wolf-gold;
+  }
+}
+
+.noise-overlay {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.wolf-eye {
+  fill: #f2a63d;
+  animation: wolf-pulse 2.6s ease-in-out infinite;
+}
+
+.wolf-eye-glow {
+  fill: #f2a63d;
+  opacity: 0.35;
+  filter: blur(10px);
+  animation: wolf-pulse 2.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .wolf-eye,
+  .wolf-eye-glow,
+  .animate-wolf-pulse,
+  .animate-scroll-dot {
+    animation: none !important;
+  }
+
+  .wolf-eye {
+    opacity: 1;
+  }
+}
