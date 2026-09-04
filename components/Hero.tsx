@@ -50,7 +50,7 @@ export default function Hero() {
 
     if (video) {
       prepareInlineVideo(video);
-      video.src = "/hero-mobile.mp4?v=1";
+      video.src = "/hero-mobile.mp4?v=2";
       video.load();
       tryPlay();
       video.addEventListener("loadeddata", tryPlay);
@@ -136,7 +136,7 @@ export default function Hero() {
           disableRemotePlayback
           aria-hidden="true"
         >
-          <source src="/hero-mobile.mp4?v=1" type="video/mp4" />
+          <source src="/hero-mobile.mp4?v=2" type="video/mp4" />
         </video>
       </div>
 
